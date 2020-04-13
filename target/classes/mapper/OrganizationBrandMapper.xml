@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.OrganizationBrandMapper" >
+  <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.OrganizationBrand" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="organization_id" property="organizationId" jdbcType="BIGINT" />
+    <result column="bu_id" property="buId" jdbcType="BIGINT" />
+    <result column="functional_area" property="functionalArea" jdbcType="VARCHAR" />
+    <result column="channel_type_id" property="channelTypeId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, brand_id, organization_id, bu_id, functional_area, channel_type_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_organization_brand
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_organization_brand
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.pwc.workbench.domain.OrganizationBrand" >
+    insert into t_organization_brand (id, brand_id, organization_id, 
+      bu_id, functional_area, channel_type_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{brandId,jdbcType=BIGINT}, #{organizationId,jdbcType=BIGINT}, 
+      #{buId,jdbcType=BIGINT}, #{functionalArea,jdbcType=VARCHAR}, #{channelTypeId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pwc.workbench.domain.OrganizationBrand" >
+    insert into t_organization_brand
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="organizationId != null" >
+        organization_id,
+      </if>
+      <if test="buId != null" >
+        bu_id,
+      </if>
+      <if test="functionalArea != null" >
+        functional_area,
+      </if>
+      <if test="channelTypeId != null" >
+        channel_type_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="organizationId != null" >
+        #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="buId != null" >
+        #{buId,jdbcType=BIGINT},
+      </if>
+      <if test="functionalArea != null" >
+        #{functionalArea,jdbcType=VARCHAR},
+      </if>
+      <if test="channelTypeId != null" >
+        #{channelTypeId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.OrganizationBrand" >
+    update t_organization_brand
+    <set >
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=BIGINT},
+      </if>
+      <if test="organizationId != null" >
+        organization_id = #{organizationId,jdbcType=BIGINT},
+      </if>
+      <if test="buId != null" >
+        bu_id = #{buId,jdbcType=BIGINT},
+      </if>
+      <if test="functionalArea != null" >
+        functional_area = #{functionalArea,jdbcType=VARCHAR},
+      </if>
+      <if test="channelTypeId != null" >
+        channel_type_id = #{channelTypeId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.OrganizationBrand" >
+    update t_organization_brand
+    set brand_id = #{brandId,jdbcType=BIGINT},
+      organization_id = #{organizationId,jdbcType=BIGINT},
+      bu_id = #{buId,jdbcType=BIGINT},
+      functional_area = #{functionalArea,jdbcType=VARCHAR},
+      channel_type_id = #{channelTypeId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <resultMap id="SelectAllResultMap" type="com.pwc.workbench.model.OrganizationBrandModel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
+    <result column="organization_id" property="organizationId" jdbcType="BIGINT" />
+    <result column="bu_id" property="buId" jdbcType="BIGINT" />
+    <result column="functional_area" property="functionalArea" jdbcType="VARCHAR" />
+    <result column="channel_type_id" property="channelTypeId" jdbcType="BIGINT" />
+    <result column="org_name" property="organizationName" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="bu_name" property="buName" jdbcType="VARCHAR" />
+    <result column="bu_code" property="buCode" jdbcType="VARCHAR" />
+    <result column="brand_code" property="brandCode" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectAll" resultMap="SelectAllResultMap" parameterType="java.lang.Long" >
+    select orgb.id, orgb.brand_id, orgb.organization_id, orgb.bu_id, orgb.functional_area, orgb.channel_type_id,
+    org.name org_name,b.code brand_code,b.name brand_name,bu.code bu_code,bu.name bu_name
+    from t_organization_brand orgb 
+    join t_organization org on orgb.organization_id=org.id
+    join t_brand b on b.id=orgb.brand_id
+    join t_bu bu on bu.id=orgb.bu_id
+   <if test="userId != null">
+      join t_user_organization uorg on uorg.organization_id=orgb.organization_id 
+                                      and uorg.user_id = #{userId,jdbcType=VARCHAR}
+                                      and (uorg.authorization_type='ExpD' or uorg.authorization_type='')
+   </if>
+   order by bu_name,orgb.id
+  </select>
+  
+  <select id="selectBrandName" resultMap="SelectAllResultMap" parameterType="java.lang.Long" >
+  	select distinct t2.brand as brand_name from t_counter_user_license t1, t_estimation_counter_data t2 
+	where t1.user_id = #{userId,jdbcType=BIGINT} and t1.estimation_counter_data_id = t2.id  
+	and (t1.authorization_type='ExpU' or t1.authorization_type='')
+  </select>
+
+  <select id="getBrandIdByOrganizationId" resultType="long" parameterType="java.lang.Long" >
+    select brand_id from t_organization_brand
+    where organization_id = #{organizationId,jdbcType=BIGINT}
+  </select>
+</mapper>

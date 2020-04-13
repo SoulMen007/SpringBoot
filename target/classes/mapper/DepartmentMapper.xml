@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.DepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.Department" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from public.t_department
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getNameToIdMap" resultType="java.util.Map" >
+    select
+    name, id
+    from t_department
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from public.t_department
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.pwc.workbench.domain.Department" >
+    insert into public.t_department (id, name)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pwc.workbench.domain.Department" >
+    insert into public.t_department
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.Department" >
+    update public.t_department
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.Department" >
+    update public.t_department
+    set name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="listAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from public.t_department
+  </select>
+  <select id="listByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    t2.id, t2.name
+    from t_user_department t1
+    left join t_department t2 on t1.department_id = t2.id
+    where user_id = #{userId,jdbcType=BIGINT}
+    order by t2.name 
+  </select>
+  
+  <select id="selectUserHasAllGroupsUploadPermission" resultType="boolean" parameterType="map" >
+    select case when count(organization_id)>0 then false else true end from 
+      (select organization_id from t_organization_brand where department_id=#{departmentId,jdbcType=BIGINT}
+       except
+      select organization_id from t_user_organization where user_id=#{userId,jdbcType=BIGINT} and authorization_type='ExpU'
+     ) except_t
+  </select>
+  
+  
+
+</mapper>

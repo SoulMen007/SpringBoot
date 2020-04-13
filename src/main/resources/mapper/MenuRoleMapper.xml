@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.MenuRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.MenuRole" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="menu_id" property="menuId" jdbcType="BIGINT" />
+    <result column="role_id" property="roleId" jdbcType="BIGINT" />
+    <result column="access_type" property="accessType" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="MenuRoleResultMap" type="com.pwc.workbench.model.MenuRoleModel" >
+  	<result column="menu_id" property="menuId" jdbcType="BIGINT" />
+  	<result column="first_menu" property="firstMenu" jdbcType="VARCHAR" />
+  	<result column="second_menu" property="secondMenu" jdbcType="VARCHAR" />
+  	<result column="role_id" property="roleId" jdbcType="BIGINT" />
+  	<result column="access_type" property="accessType" jdbcType="VARCHAR" />
+  	<result column="menu_code" property="menuCode" jdbcType="VARCHAR" />
+  	<result column="second_menu_code" property="secondMenuCode" jdbcType="VARCHAR" />
+  	<result column="menu_number" property="menuNumber" jdbcType="BIGINT" />
+  	<result column="all_menu_codes" property="allMenuCodes" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, menu_id, role_id, access_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_menu_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getAccessByMenuRole" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_menu_role
+    where role_id = #{roleId} and menu_id = #{menuId}
+  </select>
+  <select id="listMenuRole" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_menu_role
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </select>
+  <select id="listMenuRole2" resultMap="MenuRoleResultMap" parameterType="java.lang.Long" >
+  	select m.id as menu_id,m.first_menu,m.second_menu,r.name,r.id as role_id,mr.access_type 
+  	from 	
+	t_menu_role mr, t_menu m, t_role r 
+	where 
+	mr.role_id = #{roleId,jdbcType=BIGINT} and m.id = mr.menu_id and r.id = mr.role_id;
+  </select>
+  
+  <select id="getMenuByRoleId" resultMap="MenuRoleResultMap" parameterType="java.lang.Integer" >
+  	select t1.first_menu,t1.second_menu,t1.menu_code,t1.menu_number,t1.second_menu_code,t2.menu_id,t2.role_id,t2.access_type,t1.all_menu_codes
+    from t_menu t1,t_menu_role t2
+    where t2.role_id = #{roleId,jdbcType=BIGINT} and t1.id = t2.menu_id order by t1.first_menu,t1.menu_number
+  </select>
+  
+  <!--角色权限-->
+  <resultMap id="RoleMenuResultMap" type="com.pwc.workbench.model.RoleMenuModel" >
+    <id column="roleId" property="roleId" jdbcType="BIGINT" />
+    <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+    <result column="roleCode" property="roleCode" jdbcType="VARCHAR" />
+    <collection property="menuRole" column = "roleId" 
+      ofType="com.pwc.workbench.model.MenuRoleModel" select="selectMenuRoleById">
+        <result column="menuId" property="menuId" jdbcType="BIGINT" />
+	  	<result column="firstMenu" property="firstMenu" jdbcType="VARCHAR" />
+	  	<result column="secondMenu" property="secondMenu" jdbcType="VARCHAR" />
+	  	<result column="roleId" property="roleId" jdbcType="BIGINT" />
+	  	<result column="accessType" property="accessType" jdbcType="VARCHAR" />
+	  	<result column="menuCode" property="menuCode" jdbcType="VARCHAR" />
+	  	<result column="secondMenuCode" property="secondMenuCode" jdbcType="VARCHAR" />
+	  	<result column="menuNumber" property="menuNumber" jdbcType="BIGINT" />
+    </collection>
+  </resultMap>
+  <select id="getAllRoleMenu" resultMap="RoleMenuResultMap" >
+    select id as roleId, name as roleName, role_code as roleCode from t_role
+  </select>
+  <select id="selectMenuRoleById" resultType="com.pwc.workbench.model.MenuRoleModel" parameterType="java.lang.Long" >
+    select t1.first_menu as firstMenu, t1.second_menu as secondMenu, t1.menu_code as menuCode, t1.menu_number as menuNumber,
+    t1.second_menu_code as secondMenuCode, t2.menu_id as menuId, t2.role_id as roleId, t2.access_type as accessType
+    from t_menu t1,t_menu_role t2
+    where t2.role_id = #{roleId} and t1.id = t2.menu_id order by t1.first_menu,t1.menu_number
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_menu_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.pwc.workbench.domain.MenuRole" >
+    insert into t_menu_role (id, menu_id, role_id, 
+      access_type)
+    values (#{id,jdbcType=BIGINT}, #{menuId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, 
+      #{accessType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pwc.workbench.domain.MenuRole" >
+    insert into t_menu_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="menuId != null" >
+        menu_id,
+      </if>
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="accessType != null" >
+        access_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="accessType != null" >
+        #{accessType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.MenuRole" >
+    update t_menu_role
+    <set >
+      <if test="menuId != null" >
+        menu_id = #{menuId,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="accessType != null" >
+        access_type = #{accessType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.MenuRole" >
+    update t_menu_role
+    set menu_id = #{menuId,jdbcType=BIGINT},
+      role_id = #{roleId,jdbcType=BIGINT},
+      access_type = #{accessType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

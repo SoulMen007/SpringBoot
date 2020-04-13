@@ -1,0 +1,65 @@
+server:
+  port: 8080
+#mybatis configuration
+mybatis:
+  typeAliasesPackage: com.pwc.workbench.**.domain
+  mapperLocations: classpath:mapper/*.xml
+
+pagehelper:
+  helperDialect: postgresql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+#development environment configuration
+spring:
+  profiles:
+    active: local
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://dev-workbench-db-pg.postgres.database.azure.com:5432/postgres?ssl=true&sslmode=require
+    username: workbenchAdmin@dev-workbench-db-pg
+    password: Pwcwelcome123
+
+    druid:
+      #初始化连接大小
+      initial-size: 1
+      #最小空闲连接数
+      min-idle: 1
+      #最大连接数
+      max-active: 20
+      #不检测池里连接的可用性
+      test-on-borrow: false
+
+  mail:
+    host: 127.0.0.1
+    username: pwc@pwc.com
+    password: 123qwe
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 5s
+    jedis:
+      pool:
+        max-idle: 10
+        max-wait: 3s
+        max-active: 100
+
+  flyway:
+    baselineOnMigrate: true
+
+logging:
+  path: C:\\workbench\\logs
+  level:
+    root: INFO
+    com.pwc.workbench: debug
+    com.ibatis: debug
+
+essproperties:
+  cronExpression: 0 0 0/1 * * ?

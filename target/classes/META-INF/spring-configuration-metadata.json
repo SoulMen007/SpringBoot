@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "name": "druid",
+      "type": "com.pwc.workbench.druid.DruidProperties",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "essproperties",
+      "type": "com.pwc.workbench.config.EssSettings",
+      "sourceType": "com.pwc.workbench.config.EssSettings"
+    }
+  ],
+  "properties": [
+    {
+      "name": "druid.driver-class",
+      "type": "java.lang.String",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.initial-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.max-active",
+      "type": "java.lang.Integer",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.min-idle",
+      "type": "java.lang.Integer",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.password",
+      "type": "java.lang.String",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.test-on-borrow",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.url",
+      "type": "java.lang.String",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "druid.username",
+      "type": "java.lang.String",
+      "sourceType": "com.pwc.workbench.druid.DruidProperties"
+    },
+    {
+      "name": "essproperties.cron-expression",
+      "type": "java.lang.String",
+      "sourceType": "com.pwc.workbench.config.EssSettings"
+    }
+  ],
+  "hints": []
+}

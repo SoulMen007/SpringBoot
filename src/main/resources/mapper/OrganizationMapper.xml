@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.OrganizationMapper">
+    <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.Organization">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="creation_date" property="creationDate" jdbcType="TIMESTAMP"/>
+        <result column="last_update_by" property="lastUpdateBy" jdbcType="VARCHAR"/>
+        <result column="last_update_date" property="lastUpdateDate" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="UserModeMap" type="com.pwc.workbench.domain.UserMode">
+        <id column="id" property="userId" jdbcType="BIGINT"/>
+        <id column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <id column="status" property="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="OrganizationModeMap" type="com.pwc.workbench.domain.OrganizationMode">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <id column="name" property="name" jdbcType="VARCHAR"/>
+        <id column="authorization_type" property="authorizationType" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <resultMap id="RoleModeMap" type="com.pwc.workbench.domain.RoleMode">
+        <id column="role_id" property="id" jdbcType="BIGINT"/>
+        <id column="role_name" property="roleName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+
+    <sql id="Base_Column_List">
+    id, code, name, parent_id, create_by, creation_date, last_update_by, last_update_date, 
+    status
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_organization
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_organization
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_organization
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.pwc.workbench.domain.Organization">
+    insert into t_organization (id, code, name, 
+      parent_id, create_by, creation_date, 
+      last_update_by, last_update_date, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{createBy,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=VARCHAR}, #{lastUpdateDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.pwc.workbench.domain.Organization">
+        insert into t_organization
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="creationDate != null">
+                creation_date,
+            </if>
+            <if test="lastUpdateBy != null">
+                last_update_by,
+            </if>
+            <if test="lastUpdateDate != null">
+                last_update_date,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="creationDate != null">
+                #{creationDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.Organization">
+        update t_organization
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="creationDate != null">
+                creation_date = #{creationDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                last_update_by = #{lastUpdateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdateDate != null">
+                last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.Organization">
+    update t_organization
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      creation_date = #{creationDate,jdbcType=TIMESTAMP},
+      last_update_by = #{lastUpdateBy,jdbcType=VARCHAR},
+      last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <!--<select id="getOrganizationsByUserId1" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select 
+    org.id, org.code, org.name, org.parent_id, org.create_by, org.creation_date, org.last_update_by, org.last_update_date, 
+    org.status
+    from t_organization org,t_user u,t_user_organization uorg
+    where org.id=uorg.organization_id and uorg.user_id=u.id
+    and u.id = #{userId,jdbcType=BIGINT}
+  </select>    -->
+
+    <select id="getUserModes" resultMap="UserModeMap" parameterType="java.lang.Long">
+    SELECT
+    u.id,
+    u.user_name,
+	u.status
+    FROM
+	t_user u
+    WHERE
+    u.id =#{userId,jdbcType=BIGINT}
+    AND u.status='valid';
+  </select>
+
+    <select id="getOrganizationModes" resultMap="OrganizationModeMap" parameterType="java.lang.Long">
+    SELECT distinct
+	org.id,
+	org.name,
+	uorg.authorization_type
+    FROM
+	t_organization org,
+	t_user u,
+	t_user_organization uorg,
+	t_user_role ur,
+    t_privilege_role pr
+    WHERE
+	org.ID = uorg.organization_id
+     AND uorg.user_id = u.ID
+     AND ur.user_id = u.ID
+     AND pr.id=ur.role_id
+     AND u.id =#{userId,jdbcType=BIGINT}
+     and (uorg.authorization_type='ExpD' OR uorg.authorization_type='')
+     order by org.name
+    </select>
+    <select id="getUserOrganizationModes" resultMap="OrganizationModeMap" parameterType="java.lang.Long">
+    SELECT distinct
+	org.id,
+	org.name,
+	uorg.authorization_type
+    FROM
+	t_organization org,
+	t_user u,
+	t_user_organization uorg,
+	t_user_role ur,
+    t_privilege_role pr
+    WHERE
+	org.ID = uorg.organization_id
+     AND uorg.user_id = u.ID
+     AND ur.user_id = u.ID
+     AND pr.id=ur.role_id
+     AND u.id =#{userId,jdbcType=BIGINT}
+     and (uorg.authorization_type='ExpU' OR uorg.authorization_type='')
+     order by org.name
+    </select>
+
+
+    <select id="getRoleModes" resultMap="RoleModeMap" parameterType="java.lang.Long">
+        SELECT
+        distinct
+        ur.role_id,
+        pr.role_name
+        FROM
+	    t_user u,
+	    t_user_role ur,
+        t_privilege_role pr
+        WHERE
+        ur.user_id = u.ID
+        AND pr.id=ur.role_id
+        AND u.ID =#{userId,jdbcType=BIGINT};
+    </select>
+    
+    <select id="listByDepartmentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select t2.* from t_organization_brand t1
+        left join t_organization t2 on t1.organization_id = t2.id
+        where t1.department_id = #{departmentId,jdbcType=BIGINT}
+        order by t2.name
+    </select>
+
+    <select id="listIdByDepartmentPermission" resultType="java.lang.Long">
+        select t2.organization_id from t_user_department t1
+        left join t_organization_brand t2 on t1.department_id = t2.department_id
+        where t1.user_id = #{userId,jdbcType=BIGINT};
+    </select>
+
+    <select id="getCodeToIdMap" resultType="java.util.Map" >
+        select
+        code, id
+        from t_organization
+  </select>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.LogMapper" >
+  <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.Log" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="creation_date" property="creationDate" jdbcType="TIMESTAMP" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="actual_date" property="actualDate" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, creation_date, action, user_id, file_name,actual_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.pwc.workbench.domain.Log" >
+    insert into t_log (creation_date, action, user_id, file_name,actual_date)
+    values (#{creationDate,jdbcType=TIMESTAMP}, #{action,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{fileName,jdbcType=VARCHAR}, #{actualDate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pwc.workbench.domain.Log" >
+    insert into t_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="creationDate != null" >
+        creation_date,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="userid != null" >
+        user_id,
+      </if>
+      <if test="fileName != null" >
+        file_name,
+      </if>
+      <if test="actualDate != null" >
+        actual_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="creationDate != null" >
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+       <if test="actualDate != null" >
+        #{actualDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.Log" >
+    update t_log
+    <set >
+      <if test="creationDate != null" >
+        creation_date = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="action != null" >
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="fileName != null" >
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="actualDate != null" >
+        actual_date = #{actualDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.Log" >
+    update t_log
+    set creation_date = #{creationDate,jdbcType=TIMESTAMP},
+      action = #{action,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      actual_date=#{actualDate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <resultMap id="GetLogByActionResultMap" type="com.pwc.workbench.model.LogModel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="creation_date" property="creationDate" jdbcType="TIMESTAMP"/>
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="actual_date" property="actualDate" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getLogByAction" resultMap="GetLogByActionResultMap" >
+    select t1.id, t1.creation_date, t1.action, t1.user_id, t1.file_name,t1.actual_date,t2.user_name
+    from t_log t1,t_user t2
+    where t1.user_id=t2.id and (t2.status is null or t2.status='valid')
+    and t1.id in (select max(id) from t_log 
+                         where action = #{action,jdbcType=VARCHAR}
+                           and actual_date=#{actualDate,jdbcType=VARCHAR}
+                           group by user_id)
+    order by t1.creation_date desc
+  </select>
+  
+</mapper>

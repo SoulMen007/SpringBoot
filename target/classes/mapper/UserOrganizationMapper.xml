@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pwc.workbench.dao.UserOrganizationMapper" >
+  <resultMap id="BaseResultMap" type="com.pwc.workbench.domain.UserOrganization" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="organization_id" property="organizationId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, organization_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_user_organization
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectIfHasUploadPermission" resultType="boolean" parameterType="java.lang.Long" >
+    select
+    <choose>
+      <when test="userId != null">#{userId,jdbcType=BIGINT}</when>
+      <otherwise>0</otherwise>
+    </choose>
+    in (select distinct user_id from t_user_organization where authorization_type = 'ExpU')
+  </select>
+
+  <select id="selectIfHasDownloadPermission" resultType="boolean" parameterType="java.lang.Long" >
+    select
+    <choose>
+      <when test="userId != null">#{userId,jdbcType=BIGINT}</when>
+      <otherwise>0</otherwise>
+    </choose>
+    in (select distinct user_id from t_user_organization where authorization_type = 'ExpD')
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_user_organization
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.pwc.workbench.domain.UserOrganization" >
+    insert into t_user_organization (id, user_id, organization_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{organizationId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pwc.workbench.domain.UserOrganization" >
+    insert into t_user_organization
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="organizationId != null" >
+        organization_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="organizationId != null" >
+        #{organizationId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pwc.workbench.domain.UserOrganization" >
+    update t_user_organization
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="organizationId != null" >
+        organization_id = #{organizationId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pwc.workbench.domain.UserOrganization" >
+    update t_user_organization
+    set user_id = #{userId,jdbcType=BIGINT},
+      organization_id = #{organizationId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <resultMap id="GetUserOrganizationResultMap" type="com.pwc.workbench.model.UserOrganizationModel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="organization_id" property="groupId" jdbcType="BIGINT" />
+    <result column="name" property="groupName" jdbcType="VARCHAR" />
+    <result column="posm" property="posm" jdbcType="INTEGER" />
+    
+  </resultMap>
+
+  <select id="getUserOrganization" parameterType="map" resultMap="GetUserOrganizationResultMap">
+    select userOrg.id, userOrg.user_id, userOrg.organization_id,org.name,userOrg.posm
+    from t_user_organization userOrg
+    join t_organization org on org.id=userOrg.organization_id
+    and (userOrg.authorization_type=#{authorizationType} or userOrg.authorization_type='')
+    join t_organization_brand orgb on org.id=orgb.organization_id
+    join t_department d on orgb.department_id=d.id
+    where user_id=#{userId,jdbcType=BIGINT}
+    order by d.name,org.name
+  </select>
+</mapper>
